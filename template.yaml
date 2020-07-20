@@ -17,9 +17,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref CloudResumeCountTable
-      Environment:
-        Variables:
-          TABLE_NAME: "CloudResumeCountTable"
+      # Environment:
+      #   Variables:
+      #     TABLE_NAME: "CloudResumeCountTable"
       Events:
         CloudResumeCount:
           Type: Api

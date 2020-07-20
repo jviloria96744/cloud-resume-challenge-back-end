@@ -27,6 +27,6 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": os.environ["TABLE_NAME"],
+            "message": "Hello",
         }),
     }
