@@ -4,6 +4,7 @@ on:
     paths:
       - "cloud-resume-counter/**"
       - "template.yaml"
+      - ".github/workflows/main.yml"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,5 +17,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
       - name: Run Python Tests
+        run: echo "Running Tests"
       - name: sam Build
+        run: echo "sam build"
       - name: sam deploy
+        run: echo "sam deploy"
