@@ -18,7 +18,7 @@ jobs:
           aws-region: us-west-2
       - name: Run Python Tests
         run: echo "Running Tests"
-      - name: sam Build
-        run: echo "sam build"
-      - name: sam deploy
-        run: echo "sam deploy"
+      - name: Build Project
+        run: sam build
+      - name: Deploy Resources
+        run: sam deploy --stack-name cloud-resume-challenge --capabilities CAPABILITY_IAM --region us-west-2
