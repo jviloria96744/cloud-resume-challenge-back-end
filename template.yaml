@@ -11,7 +11,7 @@ Resources:
   CloudResumeCountFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: cloud-resume-counter/
+      CodeUri: CloudResumeCountFunction
       Handler: app.lambda_handler
       Runtime: python3.8
       Policies:
@@ -22,7 +22,7 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /visit_count
-            Method: post
+            Method: get
 
   CloudResumeCountTable:
     Type: AWS::DynamoDB::Table
