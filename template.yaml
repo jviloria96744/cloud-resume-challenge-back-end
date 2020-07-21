@@ -11,6 +11,7 @@ Resources:
   CloudResumeCountFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: cloud-resume-count-function
       CodeUri: cloud-resume-counter/
       Handler: app.lambda_handler
       Runtime: python3.8
