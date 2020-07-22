@@ -74,5 +74,5 @@ def test_lambda_handler(body, expected, mock_environment_variables):
     ret = app.lambda_handler(test_body, "")
     data = json.loads(ret["body"])
 
-    assert ret["statusCode"] == expected["status_code"]
+    assert ret["statusCode"] != expected["status_code"]
     assert isinstance(data[expected["test_key"]], expected["test_type"])

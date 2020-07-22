@@ -5,6 +5,7 @@ on:
       - "cloud_resume_counter/**"
       - "template.yaml"
       - ".github/workflows/main.yml"
+      - "tests/**"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,7 +21,7 @@ jobs:
         with:
           python-version: "3.8"
       - name: Run Python Tests
-        run: echo "Running Tests"
+        run: python3 pip install pytest && python3 -m pytest tests/ -v
       - name: Build Project
         run: sam build
       - name: Deploy Resources
