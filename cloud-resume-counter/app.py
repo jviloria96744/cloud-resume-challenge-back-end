@@ -1,32 +1,57 @@
 import os
 import json
+import boto3
+
+dynamodb = boto3.resource("dynamodb", os.environ["AWS_REGION"])
+table = dynamodb.Table(os.environ["TABLE_NAME"])
+
+
+def increment_visit_count(website):
+    response = table.update_item(
+        Key={
+            "Website": website,
+        },
+        UpdateExpression="ADD Visit_Count :inc",
+        ExpressionAttributeValues={":inc": 1},
+        ReturnValues="UPDATED_NEW"
+    )
+
+    return response
 
 
 def lambda_handler(event, context):
-    """Sample pure Lambda function
-
+    """
     Parameters
     ----------
     event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+        {
+            "body": {
+                "Website": [website name]
+            }
+        }
 
     context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
 
     Returns
     ------
     API Gateway Lambda Proxy Output Format: dict
 
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
+        {
+            "statusCode": [statusCode],
+            "body": {
+                "count": [count]
+            }
+        }
     """
+
+    data = json.loads(event["body"])
+
+    update_item = increment_visit_count(data["Website"])
 
     return {
         "statusCode": 200,
+        "headers": {"Access-Control-Allow-Origin":"*"},
         "body": json.dumps({
-            "message": os.environ["TABLE_NAME"],
+            "count": int(update_item["Attributes"]["Visit_Count"])
         }),
     }

@@ -2,10 +2,14 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: SAM Template for Cloud Resume Challenge Back-End (Visitor Counter)
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 10
+  Api:
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
 
 Resources:
   CloudResumeCountFunction:
@@ -20,13 +24,13 @@ Resources:
             TableName: !Ref CloudResumeCountTable
       Environment:
         Variables:
-          TABLE_NAME: "CloudResumeCountTable"
+          TABLE_NAME: "WebsiteVisitCounts"
       Events:
         CloudResumeCount:
           Type: Api
           Properties:
             Path: /visit_count
-            Method: get
+            Method: post
 
   CloudResumeCountTable:
     Type: AWS::DynamoDB::Table
