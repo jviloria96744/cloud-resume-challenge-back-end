@@ -7,6 +7,15 @@ table = dynamodb.Table(os.environ["TABLE_NAME"])
 
 
 def increment_visit_count(website):
+    """
+    Parameters
+    ----------
+    website: string, required
+
+    Returns
+    -------
+    Return value from DynamoDB update item operation with new count: dict
+    """
     response = table.update_item(
         Key={
             "Website": website,
