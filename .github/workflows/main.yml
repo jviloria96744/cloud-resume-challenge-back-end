@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.8"
       - name: Run Python Tests
-        run: pip3 install pytest && python3 -m pytest tests/ -v
+        run: pip3 install pytest boto3 && python3 -m pytest tests/ -v
       - name: Build Project
         run: sam build
       - name: Deploy Resources
