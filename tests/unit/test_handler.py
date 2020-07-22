@@ -62,7 +62,7 @@ event_fixed_items = {
 test_cases = [
     ('{\"message\": \"test\"}', {'status_code': 400, 'test_key': 'error', 'test_type': str}),
     ('{\"Website\": 1}', {'status_code': 400, 'test_key': 'error', 'test_type': str}),
-    ('{\"Website\": \"Pytest\"}', {'status_code': 200, 'test_key': 'count', 'test_type': int})
+    ('{\"Website\": \"Pytest\"}', {'status_code': 201, 'test_key': 'count', 'test_type': int})
 ]
 @pytest.mark.parametrize("body, expected", test_cases)
 def test_lambda_handler(body, expected, mock_environment_variables):
@@ -74,5 +74,5 @@ def test_lambda_handler(body, expected, mock_environment_variables):
     ret = app.lambda_handler(test_body, "")
     data = json.loads(ret["body"])
 
-    assert ret["statusCode"] != expected["status_code"]
+    assert ret["statusCode"] == expected["status_code"]
     assert isinstance(data[expected["test_key"]], expected["test_type"])
