@@ -2,7 +2,7 @@ name: Cloud Resume Challenge CI/CD Back-End
 on:
   push:
     paths:
-      - "cloud-resume-counter/**"
+      - "cloud_resume_counter/**"
       - "template.yaml"
       - ".github/workflows/main.yml"
 jobs:
