@@ -1,11 +1,15 @@
 import json
 import pytest
+from moto import mock_dynamodb2
+
+REGION = "us-west-2"
+TABLE_NAME = "TEST_TABLE_NAME"
 
 
 @pytest.fixture
 def mock_environment_variables(monkeypatch):
-    monkeypatch.setenv("AWS_REGION", "us-west-2")
-    monkeypatch.setenv("TABLE_NAME", "WebsiteVisitCounts")
+    monkeypatch.setenv("AWS_REGION", REGION)
+    monkeypatch.setenv("TABLE_NAME", TABLE_NAME)
 
 
 event_fixed_items = {
@@ -59,6 +63,36 @@ event_fixed_items = {
     "path": "/examplepath",
 }
 
+@mock_dynamodb2
+def run_lambda_function(test_body):
+    with mock_dynamodb2():
+        import boto3
+        dynamodb = boto3.resource("dynamodb", REGION)
+        table = dynamodb.create_table(
+            TableName=TABLE_NAME,
+            KeySchema=[
+                {
+                    "AttributeName": "Website",
+                    "KeyType": "HASH"
+                },
+            ],
+            AttributeDefinitions=[
+                {
+                    "AttributeName": "Website",
+                    "AttributeType": "S"
+                },
+
+            ],
+            BillingMode="PAY_PER_REQUEST"
+        )
+
+        from cloud_resume_counter import app
+        
+        ret = app.lambda_handler(test_body, "")
+
+    return ret
+
+
 test_cases = [
     ('{\"message\": \"test\"}', {'status_code': 400, 'test_key': 'error', 'test_type': str}),
     ('{\"Website\": 1}', {'status_code': 400, 'test_key': 'error', 'test_type': str}),
@@ -69,9 +103,11 @@ def test_lambda_handler(body, expected, mock_environment_variables):
     """
     Run test cases for ValueError, KeyError and Success Scenario
     """
-    from cloud_resume_counter import app
+    
     test_body = {"body": body, **event_fixed_items}
-    ret = app.lambda_handler(test_body, "")
+    
+    ret = run_lambda_function(test_body)
+    
     data = json.loads(ret["body"])
 
     assert ret["statusCode"] == expected["status_code"]
