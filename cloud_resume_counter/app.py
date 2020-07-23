@@ -1,9 +1,32 @@
 import os
 import json
+import logging
 import boto3
+from pythonjsonlogger import jsonlogger
+
 
 dynamodb = boto3.resource("dynamodb", os.environ["AWS_REGION"])
 table = dynamodb.Table(os.environ["TABLE_NAME"])
+
+
+def setup_logging(log_level):
+    logger = logging.getLogger()
+ 
+    # Testing showed lambda sets up one default handler. If there are more,
+    # something has changed and we want to fail so an operator can investigate.
+
+    # This line is causing the unit tests to fail
+    if os.environ["TABLE_NAME"] != "TEST_TABLE_NAME":
+        assert len(logger.handlers) == 1
+ 
+    logger.setLevel(log_level)
+    json_handler = logging.StreamHandler()
+    formatter = jsonlogger.JsonFormatter(
+        fmt='%(asctime)s %(levelname)s %(name)s %(message)s'
+    )
+    json_handler.setFormatter(formatter)
+    logger.addHandler(json_handler)
+    logger.removeHandler(logger.handlers[0])
 
 
 def increment_visit_count(website):
@@ -43,13 +66,20 @@ def lambda_handler(event, context):
         Contains 'body' dict with 'count' key for new visit count
         In event of error, 'body' dict has 'error' key with error message
     """
+
     try:
+        setup_logging(logging.INFO)
+        logger = logging.getLogger()
         data = json.loads(event["body"])
 
         if "Website" in data and not isinstance(data["Website"], str):
             raise ValueError
 
+        logger.info(data["Website"])
+
         update_item = increment_visit_count(data["Website"])
+
+        logger.info(update_item["Attributes"]["Visit_Count"])
 
         return {
             "statusCode": 200,
